@@ -1,0 +1,66 @@
+version: "3.8"
+
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:12-alpine
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PW}
+      - POSTGRES_DB=${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./scripts/:/docker-entrypoint-initdb.d/
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    networks:
+      - postgres_network
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4:latest
+    depends_on:
+      - postgres
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_MAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PW}
+    ports:
+      - "9000:80"
+    restart: always
+    volumes:
+    - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - postgres_network
+
+  dremio:
+    container_name: dremio
+    image: dremio/dremio-oss:$DREMIO_IMAGE_VERSION
+    volumes:
+      - dremio_data:/opt/dremio/data
+    ports:
+      - "9047:9047"
+      - "31010:31010"
+      - "32010:32010"
+      - "45678:45678"
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    networks:
+      - postgres_network
+
+volumes:
+  postgres_data:
+  dremio_data:
+  pgadmin_data:
+
+networks:
+  postgres_network:
+    driver: bridge
