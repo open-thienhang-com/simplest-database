@@ -1,28 +1,24 @@
-
-
 CREATE TABLE Customer (
-CustomerID INT PRIMARY KEY NOT NULL,
+CustomerID SERIAL PRIMARY KEY NOT NULL,
 FirstName VARCHAR(50) NOT NULL,
 LastName VARCHAR(50) NOT NULL,
 Email VARCHAR(100) NOT NULL,
-Phone VARCHAR(20) NOT NULL,
+Phone VARCHAR(20) UNIQUE NOT NULL,
 CreatedBy VARCHAR(50) NOT NULL,
 UpdatedBy VARCHAR(50) NOT NULL,
 CreatedAt TIMESTAMP NOT NULL,
 UpdatedAt TIMESTAMP NOT NULL
 );
-
 CREATE TABLE Category (
-CategoryID INT PRIMARY KEY NOT NULL,
+CategoryID SERIAL PRIMARY KEY NOT NULL,
 Name VARCHAR(50) NOT NULL,
 CreatedBy VARCHAR(50) NOT NULL,
 UpdatedBy VARCHAR(50) NOT NULL,
 CreatedAt TIMESTAMP NOT NULL,
 UpdatedAt TIMESTAMP NOT NULL
 );
-
 CREATE TABLE Product (
-ProductID INT PRIMARY KEY NOT NULL,
+ProductID SERIAL PRIMARY KEY NOT NULL,
 Name VARCHAR(100) NOT NULL,
 Description TEXT,
 Price DECIMAL(10,2) NOT NULL,
@@ -34,9 +30,8 @@ CreatedAt TIMESTAMP NOT NULL,
 UpdatedAt TIMESTAMP NOT NULL,
 CONSTRAINT fk_Product_Category FOREIGN KEY (CategoryID) REFERENCES Category(CategoryID)
 );
-
 CREATE TABLE Employee (
-EmployeeID INT PRIMARY KEY NOT NULL,
+EmployeeID SERIAL PRIMARY KEY NOT NULL,
 FirstName VARCHAR(50) NOT NULL,
 LastName VARCHAR(50) NOT NULL,
 Position VARCHAR(50) NOT NULL,
@@ -47,8 +42,13 @@ CreatedAt TIMESTAMP NOT NULL,
 UpdatedAt TIMESTAMP NOT NULL
 );
 
+
+
+
+
+
 CREATE TABLE PriceHistory (
-ProductID INT NOT NULL,
+ProductID SERIAL NOT NULL,
 Price DECIMAL(10,2) NOT NULL,
 EffectiveDate DATE NOT NULL,
 ChangeReason TEXT,
@@ -59,9 +59,8 @@ UpdatedAt TIMESTAMP NOT NULL,
 PRIMARY KEY (ProductID, EffectiveDate),
 CONSTRAINT fk_PriceHistory_Product FOREIGN KEY (ProductID) REFERENCES Product(ProductID)
 );
-
 CREATE TABLE DeliveryAddress (
-AddressID INT PRIMARY KEY NOT NULL,
+AddressID SERIAL PRIMARY KEY NOT NULL,
 CustomerID INT NOT NULL,
 Street VARCHAR(100) NOT NULL,
 City VARCHAR(50) NOT NULL,
@@ -74,9 +73,8 @@ CreatedAt TIMESTAMP NOT NULL,
 UpdatedAt TIMESTAMP NOT NULL,
 CONSTRAINT fk_DeliveryAddress_Customer FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID)
 );
-
 CREATE TABLE Orders (
-OrderID INT PRIMARY KEY NOT NULL,
+OrderID SERIAL PRIMARY KEY NOT NULL,
 OrderDate DATE NOT NULL,
 CustomerID INT NOT NULL,
 EmployeeID INT NOT NULL,
@@ -90,9 +88,8 @@ CONSTRAINT fk_Orders_Customer FOREIGN KEY (CustomerID) REFERENCES Customer(Custo
 CONSTRAINT fk_Orders_Employee FOREIGN KEY (EmployeeID) REFERENCES Employee(EmployeeID),
 CONSTRAINT fk_Orders_DeliveryAddress FOREIGN KEY (DeliveryAddressID) REFERENCES DeliveryAddress(AddressID)
 );
-
 CREATE TABLE OrderDetails (
-OrderDetailID INT PRIMARY KEY NOT NULL,
+OrderDetailID SERIAL PRIMARY KEY NOT NULL,
 OrderID INT NOT NULL,
 ProductID INT NOT NULL,
 Quantity INT NOT NULL,
@@ -106,7 +103,7 @@ CONSTRAINT fk_OrderDetails_Product FOREIGN KEY (ProductID) REFERENCES Product(Pr
 
 
 CREATE TABLE Payment (
-PaymentID INT PRIMARY KEY NOT NULL,
+PaymentID SERIAL PRIMARY KEY NOT NULL,
 OrderID INT NOT NULL,
 CustomerID INT NOT NULL,
 Amount DECIMAL(10,2) NOT NULL,
@@ -119,6 +116,10 @@ UpdatedAt TIMESTAMP NOT NULL,
 CONSTRAINT fk_Payment_Order FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
 CONSTRAINT fk_Payment_Customer FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID)
 );
+
+
+
+
  
 --Customer
 INSERT INTO Customer (CustomerID, FirstName, LastName, Email, Phone, CreatedBy, UpdatedBy, CreatedAt, UpdatedAt)
